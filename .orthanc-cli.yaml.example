@@ -1,0 +1,14 @@
+# Orthanc CLI Configuration Example
+# Copy this file to ~/.orthanc-cli.yaml or use --config flag
+
+orthanc:
+  # Orthanc server URL
+  url: "http://localhost:8042"
+
+  # Orthanc authentication credentials
+  username: "orthanc"
+  password: "orthanc"
+
+  # Skip TLS certificate verification (use with caution)
+  insecure: false
+
