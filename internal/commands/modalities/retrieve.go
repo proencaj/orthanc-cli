@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/proencaj/gorthanc/types"
+	"github.com/proencaj/orthanc-cli/internal/helpers"
 	"github.com/spf13/cobra"
 )
 
@@ -118,8 +119,8 @@ func runRetrieve(modalityName string, flags *RetrieveFlags) error {
 		Level:        flags.level,
 		Resources:    resourcesList,
 		Timeout:      flags.timeout,
-		Permissive:   flags.permissive,
-		Asynchronous: flags.asynchronous,
+		Permissive:   helpers.BoolPtr(flags.permissive),
+		Asynchronous: helpers.BoolPtr(flags.asynchronous),
 	}
 
 	// Display operation details

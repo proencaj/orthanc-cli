@@ -1,4 +1,4 @@
-package studies
+package tools
 
 import (
 	"github.com/proencaj/orthanc-cli/internal/client"
@@ -36,22 +36,19 @@ func shouldUseJSON() bool {
 	return cfg.Output.JSON
 }
 
-// NewStudiesCommand creates the studies command with all subcommands
-func NewStudiesCommand() *cobra.Command {
-	studiesCmd := &cobra.Command{
-		Use:   "studies",
-		Short: "Manage Orthanc studies",
-		Long:  `Query, list, and manage DICOM studies in the Orthanc server.`,
+// NewToolsCommand creates the tools command with all subcommands
+func NewToolsCommand() *cobra.Command {
+	toolsCmd := &cobra.Command{
+		Use:   "tools",
+		Short: "Orthanc server tools and utilities",
+		Long:  `Access various Orthanc server tools including search, reset, and configuration utilities.`,
 	}
 
 	// Add subcommands
-	studiesCmd.AddCommand(NewListCommand())
-	studiesCmd.AddCommand(NewGetCommand())
-	studiesCmd.AddCommand(NewRemoveCommand())
-	studiesCmd.AddCommand(NewAnonymizeCommand())
-	studiesCmd.AddCommand(NewArchiveCommand())
-	studiesCmd.AddCommand(NewListSeriesCommand())
-	studiesCmd.AddCommand(NewListInstancesCommand())
+	toolsCmd.AddCommand(NewFindCommand())
+	toolsCmd.AddCommand(NewResetCommand())
+	toolsCmd.AddCommand(NewShutdownCommand())
+	toolsCmd.AddCommand(NewLogLevelCommand())
 
-	return studiesCmd
+	return toolsCmd
 }

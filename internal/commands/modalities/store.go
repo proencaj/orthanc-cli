@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/proencaj/gorthanc/types"
+	"github.com/proencaj/orthanc-cli/internal/helpers"
 	"github.com/spf13/cobra"
 )
 
@@ -91,7 +92,7 @@ func runStore(modalityName string, flags *StoreFlags) error {
 	// Build the store request
 	request := &types.ModalityStoreRequest{
 		Resources:         flags.resources,
-		Synchronous:       flags.synchronous,
+		Synchronous:       helpers.BoolPtr(flags.synchronous),
 		LocalAet:          flags.localAet,
 		RemoteAet:         flags.remoteAet,
 		Timeout:           flags.timeout,

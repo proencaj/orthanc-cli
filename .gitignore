@@ -46,3 +46,4 @@ orthanc-*
 *.zip
 
 TODO.md
+Makefile.old

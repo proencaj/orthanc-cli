@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/proencaj/gorthanc/types"
+	"github.com/proencaj/orthanc-cli/internal/helpers"
 	"github.com/spf13/cobra"
 )
 
@@ -105,25 +106,12 @@ func runAnonymize(instanceID string, flags *AnonymizeFlags) error {
 }
 
 // buildAnonymizeRequest creates a properly formatted anonymize request
-// This works around the issue where bool fields with false values are omitted due to omitempty
 func buildAnonymizeRequest(flags *AnonymizeFlags) *types.InstancesAnonymizeRequest {
-	request := &types.InstancesAnonymizeRequest{}
-
-	// Set Force if true
-	if flags.force {
-		request.Force = true
+	request := &types.InstancesAnonymizeRequest{
+		Force:      helpers.BoolPtr(flags.force),
+		Permissive: helpers.BoolPtr(flags.permissive),
+		KeepSource: helpers.BoolPtr(flags.keepSource),
 	}
-
-	// Set Permissive if true
-	if flags.permissive {
-		request.Permissive = true
-	}
-
-	// Always set KeepSource explicitly
-	// Note: Due to omitempty in the gorthanc library, when KeepSource is false,
-	// it will be omitted from the JSON. This is a limitation of the library.
-	// The workaround would require the library to use *bool instead of bool.
-	request.KeepSource = flags.keepSource
 
 	return request
 }

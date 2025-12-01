@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/proencaj/gorthanc/types"
+	"github.com/proencaj/orthanc-cli/internal/helpers"
 	"github.com/spf13/cobra"
 )
 
@@ -133,8 +134,8 @@ func runMove(modalityName string, flags *MoveFlags) error {
 		Resources:    resourcesList,
 		Timeout:      flags.timeout,
 		Priority:     flags.priority,
-		Permissive:   flags.permissive,
-		Asynchronous: flags.asynchronous, // TODO: Cannot be async
+		Permissive:   helpers.BoolPtr(flags.permissive),
+		Asynchronous: helpers.BoolPtr(flags.asynchronous),
 		Limit:        flags.limit,
 	}
 

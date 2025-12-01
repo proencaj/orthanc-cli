@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/proencaj/gorthanc/types"
+	"github.com/proencaj/orthanc-cli/internal/helpers"
 	"github.com/spf13/cobra"
 )
 
@@ -94,7 +95,7 @@ func runFind(modalityName string, flags *FindFlags) error {
 	request := &types.ModalityFindRequest{
 		Level:     flags.level,
 		Query:     flags.tags,
-		Normalize: flags.normalize,
+		Normalize: helpers.BoolPtr(flags.normalize),
 		Timeout:   flags.timeout,
 	}
 
