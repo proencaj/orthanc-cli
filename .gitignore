@@ -40,6 +40,8 @@ orthanc-*
 
 # Test files
 *.tmp
+*.zip
+*.dcm
 
 # Release archives
 *.tar.gz

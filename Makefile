@@ -46,18 +46,12 @@ LDFLAGS := -ldflags "\
 
 # Platform Detection
 # ------------------
-ifeq ($(OS),Windows_NT)
-	DETECTED_OS := windows
-	BINARY_EXT := .exe
-else
-	UNAME_S := $(shell uname -s)
-	ifeq ($(UNAME_S),Linux)
-		DETECTED_OS := linux
-	endif
-	ifeq ($(UNAME_S),Darwin)
-		DETECTED_OS := darwin
-	endif
-	BINARY_EXT :=
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	DETECTED_OS := linux
+endif
+ifeq ($(UNAME_S),Darwin)
+	DETECTED_OS := darwin
 endif
 
 # Build Targets
@@ -106,9 +100,9 @@ help: ## Show this help message
 build: ## Build binary for current platform
 	@echo "$(BLUE)Building $(BINARY_NAME) for $(DETECTED_OS)...$(NC)"
 	@mkdir -p $(BUILD_DIR)
-	@$(GO) build $(GOFLAGS) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_NAME)$(BINARY_EXT) $(MAIN_PACKAGE)
-	@echo "$(GREEN)✓ Binary built: $(BUILD_DIR)/$(BINARY_NAME)$(BINARY_EXT)$(NC)"
-	@ls -lh $(BUILD_DIR)/$(BINARY_NAME)$(BINARY_EXT)
+	@$(GO) build $(GOFLAGS) $(LDFLAGS) -o $(BUILD_DIR)/$(BINARY_NAME) $(MAIN_PACKAGE)
+	@echo "$(GREEN)✓ Binary built: $(BUILD_DIR)/$(BINARY_NAME)$(NC)"
+	@ls -lh $(BUILD_DIR)/$(BINARY_NAME)
 
 .PHONY: build-all
 build-all: ## Build binaries for all platforms
@@ -135,8 +129,8 @@ build-all: ## Build binaries for all platforms
 .PHONY: dev
 dev: ## Quick development build (no version info, faster)
 	@echo "$(BLUE)Building development version...$(NC)"
-	@$(GO) build $(GOFLAGS) -o $(BINARY_NAME)$(BINARY_EXT) $(MAIN_PACKAGE)
-	@echo "$(GREEN)✓ Development build: ./$(BINARY_NAME)$(BINARY_EXT)$(NC)"
+	@$(GO) build $(GOFLAGS) -o $(BINARY_NAME) $(MAIN_PACKAGE)
+	@echo "$(GREEN)✓ Development build: ./$(BINARY_NAME)$(NC)"
 
 ##@ Installation
 
@@ -144,14 +138,14 @@ dev: ## Quick development build (no version info, faster)
 install: build ## Install binary to system (default: /usr/local/bin)
 	@echo "$(BLUE)Installing $(BINARY_NAME) to $(INSTALL_DIR)...$(NC)"
 	@install -d $(INSTALL_DIR)
-	@install -m 755 $(BUILD_DIR)/$(BINARY_NAME)$(BINARY_EXT) $(INSTALL_DIR)/$(BINARY_NAME)$(BINARY_EXT)
-	@echo "$(GREEN)✓ Installed to $(INSTALL_DIR)/$(BINARY_NAME)$(BINARY_EXT)$(NC)"
+	@install -m 755 $(BUILD_DIR)/$(BINARY_NAME) $(INSTALL_DIR)/$(BINARY_NAME)
+	@echo "$(GREEN)✓ Installed to $(INSTALL_DIR)/$(BINARY_NAME)$(NC)"
 	@echo "  Run '$(BINARY_NAME) --help' to get started"
 
 .PHONY: uninstall
 uninstall: ## Remove binary from system
 	@echo "$(BLUE)Uninstalling $(BINARY_NAME)...$(NC)"
-	@rm -f $(INSTALL_DIR)/$(BINARY_NAME)$(BINARY_EXT)
+	@rm -f $(INSTALL_DIR)/$(BINARY_NAME)
 	@echo "$(GREEN)✓ Uninstalled$(NC)"
 
 ##@ Testing & Quality
@@ -305,7 +299,7 @@ checksums: ## Generate SHA256 checksums for release files
 clean: ## Remove build artifacts
 	@echo "$(BLUE)Cleaning build artifacts...$(NC)"
 	@rm -rf $(BUILD_DIR) $(DIST_DIR) $(COVERAGE_DIR)
-	@rm -f $(BINARY_NAME)$(BINARY_EXT)
+	@rm -f $(BINARY_NAME)
 	@$(GO) clean
 	@echo "$(GREEN)✓ Clean complete$(NC)"
 
@@ -320,11 +314,11 @@ clean-deps: ## Clean module cache
 .PHONY: run
 run: build ## Build and run the binary
 	@echo "$(BLUE)Running $(BINARY_NAME)...$(NC)"
-	@$(BUILD_DIR)/$(BINARY_NAME)$(BINARY_EXT)
+	@$(BUILD_DIR)/$(BINARY_NAME)
 
 .PHONY: run-help
 run-help: build ## Build and show help
-	@$(BUILD_DIR)/$(BINARY_NAME)$(BINARY_EXT) --help
+	@$(BUILD_DIR)/$(BINARY_NAME) --help
 
 ##@ Information
 

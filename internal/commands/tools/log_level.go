@@ -48,6 +48,7 @@ func runLogLevelGet() error {
 
 	// Get the log level
 	level, err := client.GetLogLevel()
+	fmt.Println(level)
 	if err != nil {
 		return fmt.Errorf("failed to get log level: %w", err)
 	}

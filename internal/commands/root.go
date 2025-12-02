@@ -19,6 +19,7 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   "orthanc",
 	Short: "A CLI tool to interact with Orthanc DICOM servers",
+	SilenceUsage: true,
 	Long: `orthanc is a command-line interface for managing and querying
 Orthanc DICOM servers. It provides commands to interact with instances,
 studies, series, patients, and other Orthanc resources.`,

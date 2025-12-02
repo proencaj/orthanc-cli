@@ -74,7 +74,13 @@ Examples:
 				return fmt.Errorf("failed to write config file: %w", err)
 			}
 
-			fmt.Printf("✓ Set %s = %s\n", key, value)
+			// Mask password for security
+			displayValue := value
+			if key == "orthanc.password" {
+				displayValue = "********"
+			}
+
+			fmt.Printf("✓ Set %s = %s\n", key, displayValue)
 			fmt.Printf("  Config file: %s\n", configFile)
 
 			return nil

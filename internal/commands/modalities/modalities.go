@@ -49,6 +49,7 @@ func NewModalitiesCommand() *cobra.Command {
 	modalitiesCmd.AddCommand(NewGetCommand())
 	modalitiesCmd.AddCommand(NewCreateCommand())
 	modalitiesCmd.AddCommand(NewUpdateCommand())
+	modalitiesCmd.AddCommand(NewRemoveCommand())
 	modalitiesCmd.AddCommand(NewEchoCommand())
 	modalitiesCmd.AddCommand(NewFindCommand())
 	modalitiesCmd.AddCommand(NewMoveCommand())
