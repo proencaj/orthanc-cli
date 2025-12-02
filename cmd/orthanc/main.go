@@ -9,9 +9,20 @@ import (
 	"github.com/proencaj/orthanc-cli/internal/commands/studies"
 	"github.com/proencaj/orthanc-cli/internal/commands/system"
 	"github.com/proencaj/orthanc-cli/internal/commands/tools"
+	"github.com/proencaj/orthanc-cli/internal/commands/version"
+)
+
+// Version information (injected at build time via ldflags)
+var (
+	Version   = "dev"
+	Commit    = "unknown"
+	BuildTime = "unknown"
 )
 
 func main() {
+	// Set version information for the version command
+	version.SetVersionInfo(Version, Commit, BuildTime)
+
 	// Set up the client getter for studies command to avoid import cycle
 	studies.SetClientGetter(cmd.GetClient)
 
@@ -41,6 +52,7 @@ func main() {
 	cmd.AddCommand(modalities.NewModalitiesCommand())
 	cmd.AddCommand(tools.NewToolsCommand())
 	cmd.AddCommand(system.NewSystemCommand())
+	cmd.AddCommand(version.NewVersionCommand())
 
 	// Execute CLI
 	cmd.Execute()

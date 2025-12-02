@@ -22,9 +22,12 @@ go.work
 bin/
 dist/
 build/
+coverage/
 orthanc
+orthanc-cli
 orthanc-*
 !cmd/orthanc
+!internal/commands/orthanc*
 
 # IDE specific files
 .idea/
@@ -40,12 +43,15 @@ orthanc-*
 
 # Test files
 *.tmp
-*.zip
 *.dcm
 
-# Release archives
+# Release archives (generated during build)
 *.tar.gz
 *.zip
+SHA256SUMS.txt
 
+# Temporary/old files
 TODO.md
+README.old.md
 Makefile.old
+*.old

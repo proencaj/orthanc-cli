@@ -269,8 +269,61 @@ tidy: ## Tidy go.mod and go.sum
 
 ##@ Release & Distribution
 
+.PHONY: release-prepare
+release-prepare: ## Validate everything before building a release
+	@echo "$(BLUE)Validating release readiness...$(NC)"
+	@echo ""
+	@echo "$(YELLOW)Checking git status...$(NC)"
+	@if [ -n "$$(git status --porcelain)" ]; then \
+		echo "$(RED)✗ Working directory is not clean$(NC)"; \
+		echo "  Please commit or stash your changes before release"; \
+		git status --short; \
+		exit 1; \
+	fi
+	@echo "  $(GREEN)✓$(NC) Working directory is clean"
+	@echo ""
+	@echo "$(YELLOW)Checking required files...$(NC)"
+	@for file in README.md LICENSE CHANGELOG.md; do \
+		if [ ! -f $$file ]; then \
+			echo "  $(RED)✗$(NC) Missing $$file"; \
+			exit 1; \
+		else \
+			echo "  $(GREEN)✓$(NC) $$file exists"; \
+		fi \
+	done
+	@echo ""
+	@echo "$(YELLOW)Checking version tag...$(NC)"
+	@if [ "$(VERSION)" = "dev" ] || [ "$(VERSION)" = "unknown" ]; then \
+		echo "  $(RED)✗$(NC) No version tag found"; \
+		echo "  Please create a git tag (e.g., git tag -a v0.1.0 -m 'Release v0.1.0')"; \
+		exit 1; \
+	fi
+	@echo "  $(GREEN)✓$(NC) Version: $(VERSION)"
+	@echo ""
+	@echo "$(YELLOW)Running tests...$(NC)"
+	@$(GO) test ./... >/dev/null 2>&1 && \
+		echo "  $(GREEN)✓$(NC) All tests passed" || \
+		(echo "  $(RED)✗$(NC) Tests failed" && exit 1)
+	@echo ""
+	# Commented out for now - uncomment when ready to enforce formatting
+	# @echo "$(YELLOW)Checking code formatting...$(NC)"
+	# @unformatted=$$(gofmt -l .); \
+	# if [ -n "$$unformatted" ]; then \
+	# 	echo "  $(RED)✗$(NC) Code is not formatted"; \
+	# 	echo "$$unformatted"; \
+	# 	exit 1; \
+	# fi
+	# @echo "  $(GREEN)✓$(NC) Code is properly formatted"
+	# @echo ""
+	@echo "$(YELLOW)Running go vet...$(NC)"
+	@$(GO) vet ./... >/dev/null 2>&1 && \
+		echo "  $(GREEN)✓$(NC) Vet passed" || \
+		(echo "  $(RED)✗$(NC) Vet failed" && exit 1)
+	@echo ""
+	@echo "$(GREEN)✓ Release validation passed! Ready to build release.$(NC)"
+
 .PHONY: release
-release: clean build-all ## Create release archives for distribution
+release: release-prepare clean build-all ## Create release archives for distribution
 	@echo "$(BLUE)Creating release archives...$(NC)"
 	@mkdir -p $(BUILD_DIR)/release
 	@for platform in $(PLATFORMS); do \
@@ -279,7 +332,13 @@ release: clean build-all ## Create release archives for distribution
 		binary_name=$(BINARY_NAME)-$$GOOS-$$GOARCH; \
 		archive_name=$(BINARY_NAME)-$(VERSION)-$$GOOS-$$GOARCH.tar.gz; \
 		echo "  $(YELLOW)→$(NC) Creating $$archive_name..."; \
-		cd $(BUILD_DIR) && tar -czf release/$$archive_name $$binary_name && cd ..; \
+		mkdir -p $(BUILD_DIR)/release-tmp; \
+		cp $(BUILD_DIR)/$$binary_name $(BUILD_DIR)/release-tmp/$(BINARY_NAME); \
+		cp README.md LICENSE CHANGELOG.md $(BUILD_DIR)/release-tmp/; \
+		cd $(BUILD_DIR)/release-tmp && \
+			tar -czf ../release/$$archive_name $(BINARY_NAME) README.md LICENSE CHANGELOG.md && \
+			cd ../..; \
+		rm -rf $(BUILD_DIR)/release-tmp; \
 	done
 	@echo ""
 	@echo "$(GREEN)✓ Release archives created:$(NC)"
@@ -289,9 +348,11 @@ release: clean build-all ## Create release archives for distribution
 checksums: ## Generate SHA256 checksums for release files
 	@echo "$(BLUE)Generating checksums...$(NC)"
 	@cd $(BUILD_DIR)/release && \
-		shasum -a 256 * > SHA256SUMS.txt && \
+		shasum -a 256 *.tar.gz > SHA256SUMS.txt && \
 		cd ../..
 	@echo "$(GREEN)✓ Checksums generated: $(BUILD_DIR)/release/SHA256SUMS.txt$(NC)"
+	@echo ""
+	@cat $(BUILD_DIR)/release/SHA256SUMS.txt
 
 ##@ Cleanup
 

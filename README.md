@@ -1,47 +1,101 @@
 # Orthanc CLI
 
-A command-line interface for managing and querying resources on Orthanc DICOM servers.
+A powerful command-line interface for managing Orthanc DICOM servers, designed to streamline daily workflows in medical imaging environments.
+
+## Why Orthanc CLI?
+
+Working with Orthanc DICOM servers through web interfaces or REST APIs directly can be time-consuming and repetitive. Orthanc CLI was created to solve this problem by providing a fast, efficient command-line tool that simplifies common operations and integrates seamlessly into your daily workflow.
+
+### The Problem
+
+Medical imaging professionals, PACS administrators, and developers working with Orthanc often need to:
+
+- Query and manage large volumes of DICOM studies across multiple servers
+- Perform bulk operations like anonymization, archiving, or migration
+- Automate repetitive tasks in shell scripts or CI/CD pipelines
+- Quickly troubleshoot issues without navigating through web UIs
+- Integrate Orthanc operations with other command-line tools
+
+Doing these tasks through the web interface is slow, and writing custom scripts against the REST API requires constant API reference lookups and error handling boilerplate.
+
+### The Solution
+
+Orthanc CLI provides a unified, intuitive interface for all common Orthanc operations:
+
+- **Single Command Access**: Manage patients, studies, series, and instances with simple, memorable commands
+- **Script-Friendly**: Perfect for automation, batch processing, and integration into existing workflows
+- **Modality Management**: Configure and interact with DICOM modalities (C-ECHO, C-FIND, C-MOVE, C-GET, C-STORE)
+- **Bulk Operations**: Perform operations across multiple resources efficiently
+- **System Administration**: Monitor, configure, and maintain Orthanc servers from the terminal
+- **Data Privacy**: Built-in anonymization commands for protecting patient data
+- **Fast Iteration**: Quickly test, debug, and explore DICOM data without leaving your terminal
+
+Whether you're a radiologist managing studies, a developer building PACS integrations, or a system administrator maintaining medical imaging infrastructure, Orthanc CLI optimizes your day-to-day interactions with Orthanc servers.
 
 ## Features
 
-- **Configuration Management**: Easy setup and management of Orthanc server credentials
-- **Environment Variable Support**: Override configuration with environment variables
-- **Single Configuration**: Simple, single-server configuration approach
-- **Secure by Default**: Support for HTTPS and basic authentication
-- **Cross-Platform**: Builds for Linux and Mac OS
+### Resource Management
+- **Patients**: List, query, retrieve, anonymize, and delete patient records
+- **Studies**: Full CRUD operations, archiving, and batch processing
+- **Series**: Manage series, list instances, download archives
+- **Instances**: Upload, download, anonymize, and manage individual DICOM files
+
+### DICOM Networking
+- **Modality Configuration**: Create, update, and manage DICOM modalities
+- **DICOM Operations**: C-ECHO, C-FIND, C-MOVE, C-GET, and C-STORE support
+- **Batch Transfer**: Move or retrieve studies across modalities efficiently
+
+### System Operations
+- **Server Management**: Monitor system status, adjust log levels, perform maintenance
+- **Advanced Search**: Powerful query capabilities using Orthanc's `/tools/find` endpoint
+- **Configuration**: Simple, secure credential management with environment variable support
+
+### Developer-Friendly
+- **Pipeline Integration**: Exit codes and JSON output for scripting
+- **Cross-Platform**: Linux and macOS support (amd64 and arm64)
+- **Secure**: HTTPS support, credential encryption, environment variable overrides
+- **Extensible**: Built on the [gorthanc](https://github.com/proencaj/gorthanc) library
 
 ## Installation
 
-Not ready
+### Building from Source
 
-### Build from Source
+#### Prerequisites
+- Go 1.25 or later
+- Make (optional, for convenience)
 
 #### Using Make
 
-Build and install:
-
 ```bash
+# Clone the repository
+git clone https://github.com/proencaj/orthanc-cli.git
+cd orthanc-cli
+
+# Build and install to /usr/local/bin
 make install
 ```
-
-This installs the `orthanc` binary to `/usr/local/bin`.
 
 #### Manual Build
 
 ```bash
+# Build for your current platform
 go build -o orthanc ./cmd/orthanc
+
+# Move to your PATH
+sudo mv orthanc /usr/local/bin/
 ```
 
-#### Build for Multiple Platforms
+#### Cross-Platform Builds
+
+Build binaries for multiple platforms at once:
 
 ```bash
 make build-all
 ```
 
-This creates binaries in `bin/` for:
-
+This creates binaries in the `bin/` directory for:
 - Linux (amd64, arm64)
-- macOS (amd64, arm64)
+- macOS (amd64, arm64, including Apple Silicon)
 
 ## Quick Start
 
@@ -53,7 +107,7 @@ orthanc config init
 
 This creates `~/.orthanc-cli.yaml` with default settings.
 
-### 2. Configure Your Server
+### 2. Configure Your Orthanc Server
 
 ```bash
 orthanc config set orthanc.url http://localhost:8042
@@ -61,37 +115,130 @@ orthanc config set orthanc.username orthanc
 orthanc config set orthanc.password orthanc
 ```
 
-### 3. Verify Configuration
+### 3. Start Using the CLI
 
 ```bash
-orthanc config list
+# List all studies
+orthanc studies list
+
+# Get details for a specific study
+orthanc studies get <study-id>
+
+# Download a study archive
+orthanc studies archive <study-id> -o study.zip
+
+# List all configured modalities
+orthanc modalities list
+
+# Test connectivity to a modality
+orthanc modalities echo <modality-name>
 ```
 
-## Usage
+## Usage Examples
 
-### Configuration Commands
+### Patient Management
 
 ```bash
-# Initialize config
-orthanc config init
+# List all patients
+orthanc patients list
 
-# Set configuration values
-orthanc config set orthanc.url http://localhost:8042
-orthanc config set orthanc.username admin
-orthanc config set orthanc.password secret
-orthanc config set orthanc.insecure false
+# Get patient details
+orthanc patients get <patient-id>
 
-# Get configuration values
-orthanc config get orthanc.url
+# Anonymize a patient
+orthanc patients anonymize <patient-id>
 
-# List all configuration
-orthanc config list
-orthanc config list --show-password  # Show password in plain text
+# Remove a patient (with confirmation)
+orthanc patients remove <patient-id>
+```
+
+### Study Operations
+
+```bash
+# List all studies
+orthanc studies list
+
+# Download study as ZIP archive
+orthanc studies archive <study-id> -o output.zip
+
+# Anonymize a study
+orthanc studies anonymize <study-id>
+
+# List all series in a study
+orthanc studies list-series <study-id>
+
+# List all instances in a study
+orthanc studies list-instances <study-id>
+```
+
+### Instance Management
+
+```bash
+# Upload a DICOM file
+orthanc instances upload /path/to/file.dcm
+
+# Download an instance
+orthanc instances download <instance-id> -o output.dcm
+
+# Anonymize an instance
+orthanc instances anonymize <instance-id>
+```
+
+### Modality Operations
+
+```bash
+# Create a new modality
+orthanc modalities create REMOTE_PACS --aet REMOTE --host 192.168.1.100 --port 11112
+
+# Test connectivity
+orthanc modalities echo REMOTE_PACS
+
+# Find studies on a remote modality
+orthanc modalities find REMOTE_PACS --patient-id "12345"
+
+# Move a study to a modality
+orthanc modalities move REMOTE_PACS <study-id>
+
+# Retrieve study from modality (C-GET)
+orthanc modalities retrieve REMOTE_PACS <study-id>
+
+# Store study to modality (C-STORE)
+orthanc modalities store REMOTE_PACS <study-id>
+```
+
+### System Administration
+
+```bash
+# Find resources using advanced queries
+orthanc tools find --level Study --query '{"PatientName":"DOE*"}'
+
+# Change log level
+orthanc tools log-level default
+
+# Reset the server (careful!)
+orthanc tools reset --force
+
+# Shutdown the server
+orthanc tools shutdown
+```
+
+## Configuration
+
+### Configuration File
+
+The CLI uses a configuration file at `~/.orthanc-cli.yaml`:
+
+```yaml
+orthanc:
+  url: "http://localhost:8042"
+  username: "orthanc"
+  password: "orthanc"
+  insecure: false  # Set to true to skip TLS verification
 ```
 
 ### Environment Variables
 
-Override configuration values with environment variables:
+Override configuration with environment variables (useful for CI/CD):
 
 ```bash
 export ORTHANC_URL="http://localhost:8042"
@@ -102,79 +249,53 @@ export ORTHANC_INSECURE="false"
 
 Environment variables take precedence over the config file.
 
-## Configuration
-
-The CLI uses a single configuration file located at `~/.orthanc-cli.yaml`:
-
-```yaml
-orthanc:
-  url: "http://localhost:8042"
-  username: "orthanc"
-  password: "orthanc"
-  insecure: false
-```
-
-### Configuration Priority
-
-1. **Environment Variables** (highest priority)
-2. **Configuration File** (fallback)
-
 ### Custom Config File
 
-Use a custom config file location:
+Use a different config file for multiple Orthanc servers:
 
 ```bash
-orthanc --config /path/to/custom-config.yaml config list
-
-## Development
-
-### Project Structure
-
+orthanc --config /path/to/prod-config.yaml studies list
 ```
 
-orthanc-cli/
-├── cmd/orthanc/ # Main application entry point
-├── internal/
-│ ├── client/ # Orthanc client wrapper
-│ ├── commands/ # CLI commands
-│ │ ├── config/ # Config management commands
-│ │ └── studies/ # Studies commands (coming soon)
-│ └── config/ # Configuration management
-├── examples.md # Usage examples
-├── Makefile # Build automation
-├── go.mod # Go module definition
-└── README.md # This file
+## Roadmap
 
-```
+The roadmap for future features and improvements is currently being defined. Stay tuned for updates!
 
-### Adding New Commands
-
-See the [Developer Guide](examples.md#developer-guide) in `examples.md` for information on:
-- Using the Orthanc client
-- Implementing new commands
-- Available client methods
-
-```
+If you have feature requests or ideas, please open an issue on GitHub to discuss them.
 
 ## Requirements
 
-- Go 1.25 or later
-- Access to an Orthanc DICOM server
+- Go 1.25 or later (for building from source)
+- Access to an Orthanc DICOM server (v1.9.0 or later recommended)
 
 ## Dependencies
 
+This project is built on top of excellent open-source libraries:
+
 - [cobra](https://github.com/spf13/cobra) - CLI framework
 - [viper](https://github.com/spf13/viper) - Configuration management
-- [gorthanc](https://github.com/proencaj/gorthanc) - Orthanc Go client
+- [gorthanc](https://github.com/proencaj/gorthanc) - Orthanc Go client library
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Whether it's bug reports, feature requests, documentation improvements, or code contributions, all help is appreciated.
+
+Please feel free to:
+- Open issues for bugs or feature requests
+- Submit pull requests with improvements
+- Improve documentation
+- Share your use cases and workflows
 
 ## License
 
-See LICENSE file.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Support
 
-For issues and questions, please open an issue on GitHub.
+- **Issues**: Report bugs or request features via [GitHub Issues](https://github.com/proencaj/orthanc-cli/issues)
+- **Documentation**: Check this README and command help (`orthanc --help`, `orthanc <command> --help`)
+- **Community**: Discussions and questions are welcome in GitHub Issues
+
+## Acknowledgments
+
+This project builds upon the excellent work of the [Orthanc project](https://www.orthanc-server.com/) by Sébastien Jodogne and contributors. Orthanc is a lightweight DICOM server that has made medical imaging infrastructure more accessible to developers and institutions worldwide.
