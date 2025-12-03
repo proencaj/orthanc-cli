@@ -1,0 +1,276 @@
+# GoReleaser configuration for Orthanc CLI
+# Documentation: https://goreleaser.com
+
+# GoReleaser configuration version
+version: 2
+
+# This is your project's name
+project_name: orthanc-cli
+
+# Configure the build process
+builds:
+  - # Binary name
+    binary: orthanc
+
+    # Main package path
+    main: ./cmd/orthanc
+
+    # Inject version information via ldflags (matches your Makefile)
+    ldflags:
+      - -s -w
+      - -X main.Version={{.Version}}
+      - -X main.Commit={{.FullCommit}}
+      - -X main.BuildTime={{.Date}}
+
+    # Build flags
+    flags:
+      - -buildvcs=false
+
+    # Target platforms
+    goos:
+      - linux
+      - darwin
+
+    goarch:
+      - amd64
+      - arm64
+
+    # Environment variables
+    env:
+      - CGO_ENABLED=0
+
+# Create archives for distribution
+archives:
+  - # Archive name template
+    name_template: "{{ .ProjectName }}-{{ .Version }}-{{ .Os }}-{{ .Arch }}"
+
+    # Files to include in the archive
+    files:
+      - README.md
+      - LICENSE
+      - CHANGELOG.md
+
+# Generate checksums
+checksum:
+  name_template: "SHA256SUMS.txt"
+  algorithm: sha256
+
+# Generate changelog
+changelog:
+  # Sort commits by message
+  sort: asc
+
+  # Group commits by type
+  use: github
+
+  # Changelog groups
+  groups:
+    - title: Features
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 0
+    - title: Bug Fixes
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 1
+    - title: Documentation
+      regexp: "^.*docs[(\\w)]*:+.*$"
+      order: 2
+    - title: Others
+      order: 999
+
+  filters:
+    exclude:
+      - "^test:"
+      - "^chore:"
+      - "^ci:"
+      - "merge conflict"
+      - Merge pull request
+      - Merge remote-tracking branch
+      - Merge branch
+
+# GitHub Release configuration
+release:
+  # Repository information (automatically detected from git remote)
+  github:
+    owner: proencaj
+    name: orthanc-cli
+
+  # Release name template
+  name_template: "v{{.Version}}"
+
+  # Draft release (set to false for automatic publish)
+  draft: false
+
+  # Mark all versions before v1.0.0 as prerelease
+  # This will mark v0.x.x versions as prerelease automatically
+  prerelease: |
+    {{- if semverCompare "<1.0.0" .Version }}true{{- else }}false{{- end }}
+
+  # Release notes
+  header: |
+    ## Orthanc CLI {{ .Version }}
+
+    Thank you for using Orthanc CLI! This release includes new features, improvements, and bug fixes.
+
+    ### Installation
+
+    #### Homebrew (macOS/Linux)
+    ```bash
+    brew install proencaj/tap/orthanc-cli
+    ```
+
+    #### Debian/Ubuntu (.deb)
+    ```bash
+    wget https://github.com/proencaj/orthanc-cli/releases/download/{{ .Tag }}/orthanc-cli_{{ .Version }}_linux_amd64.deb
+    sudo dpkg -i orthanc-cli_{{ .Version }}_linux_amd64.deb
+    ```
+
+    #### CentOS/RHEL/Fedora (.rpm)
+    ```bash
+    wget https://github.com/proencaj/orthanc-cli/releases/download/{{ .Tag }}/orthanc-cli_{{ .Version }}_linux_amd64.rpm
+    sudo rpm -i orthanc-cli_{{ .Version }}_linux_amd64.rpm
+    ```
+
+    #### Manual Installation
+    Download the appropriate archive for your platform below, extract it, and move the binary to your PATH.
+
+  footer: |
+    ---
+
+    **Full Changelog**: https://github.com/proencaj/orthanc-cli/compare/{{ .PreviousTag }}...{{ .Tag }}
+
+    ### Verifying Downloads
+
+    All binaries and archives are checksummed. Verify your download:
+
+    ```bash
+    shasum -a 256 -c SHA256SUMS.txt
+    ```
+
+# Debian/Ubuntu packages
+nfpms:
+  - # Package name
+    package_name: orthanc-cli
+
+    # Your app's vendor/author
+    vendor: José Proença
+
+    # Your app's homepage
+    homepage: https://github.com/proencaj/orthanc-cli
+
+    # Your app's maintainer
+    maintainer: José Proença <proenca.dev@gmail.com>
+
+    # Your app's description
+    description: |
+      A powerful command-line interface for managing Orthanc DICOM servers.
+      Orthanc CLI streamlines daily workflows in medical imaging environments
+      by providing fast, efficient command-line access to Orthanc operations.
+
+    # Your app's license
+    license: MIT
+
+    # Formats to generate (deb for Debian/Ubuntu, rpm for CentOS/RHEL/Fedora)
+    formats:
+      - deb
+      - rpm
+      - apk  # Alpine Linux
+
+    # Binary location
+    bindir: /usr/bin
+
+    # Additional files to include
+    contents:
+      - src: LICENSE
+        dst: /usr/share/doc/orthanc-cli/LICENSE
+      - src: README.md
+        dst: /usr/share/doc/orthanc-cli/README.md
+      - src: CHANGELOG.md
+        dst: /usr/share/doc/orthanc-cli/CHANGELOG.md
+
+    # Package dependencies (none for this static binary)
+    dependencies: []
+
+    # Recommended packages
+    recommends: []
+
+    # Suggested packages
+    suggests: []
+
+    # Conflicts
+    conflicts: []
+
+    # Replaces
+    replaces: []
+
+    # Override default for rpm
+    rpm:
+      # Uncomment to enable package signing:
+      # signature:
+      #   key_file: "{{ .Env.GPG_KEY_FILE }}"
+      compression: lzma
+      group: Applications/System
+
+    # Override default for deb
+    deb:
+      # Uncomment to enable package signing:
+      # signature:
+      #   key_file: "{{ .Env.GPG_KEY_FILE }}"
+      compression: xz
+      fields:
+        Section: utils
+        Priority: optional
+
+    # Scripts (optional - uncomment if needed)
+    # scripts:
+    #   preinstall: "scripts/preinstall.sh"
+    #   postinstall: "scripts/postinstall.sh"
+    #   preremove: "scripts/preremove.sh"
+    #   postremove: "scripts/postremove.sh"
+
+# Homebrew formula (for CLI tools)
+# Note: 'brews' is correct for Homebrew formulas (CLI tools) in GoReleaser v2
+# The deprecation warning refers to 'casks' for GUI apps, not formulas
+brews:
+  - # Tap repository
+    repository:
+      owner: proencaj
+      name: homebrew-tap
+      # Token for pushing to the tap repository
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+
+    # Formula name
+    name: orthanc-cli
+
+    # Homepage
+    homepage: "https://github.com/proencaj/orthanc-cli"
+
+    # Description
+    description: "A powerful command-line interface for managing Orthanc DICOM servers"
+
+    # License
+    license: "MIT"
+
+    # Skip upload (handled by GitHub release)
+    skip_upload: auto
+
+    # Install section
+    install: |
+      bin.install "orthanc"
+
+    # Test section
+    test: |
+      system "#{bin}/orthanc", "--version"
+
+# Snapshot builds (for testing without tags)
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+# Metadata
+metadata:
+  mod_timestamp: "{{ .CommitTimestamp }}"
+
+# Announce (can be extended for Slack, Discord, etc.)
+# announce:
+#   slack:
+#     enabled: true
+#     message_template: 'Orthanc CLI {{ .Tag }} is out! Check it out: {{ .ReleaseURL }}'
