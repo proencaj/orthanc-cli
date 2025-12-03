@@ -58,6 +58,117 @@ Whether you're a radiologist managing studies, a developer building PACS integra
 
 ## Installation
 
+### Homebrew (macOS and Linux)
+
+The easiest way to install Orthanc CLI on macOS or Linux is via Homebrew:
+
+```bash
+brew install proencaj/tap/orthanc-cli
+```
+
+To upgrade to the latest version:
+
+```bash
+brew upgrade orthanc-cli
+```
+
+### Debian/Ubuntu (DEB Package)
+
+For Debian-based distributions (Debian, Ubuntu, Linux Mint, etc.):
+
+```bash
+# Download the .deb package (replace VERSION with actual version, e.g., 0.1.0)
+wget https://github.com/proencaj/orthanc-cli/releases/download/vVERSION/orthanc-cli_VERSION_linux_amd64.deb
+
+# Install the package
+sudo dpkg -i orthanc-cli_VERSION_linux_amd64.deb
+
+# Verify installation
+orthanc --version
+```
+
+For ARM64 systems:
+```bash
+wget https://github.com/proencaj/orthanc-cli/releases/download/vVERSION/orthanc-cli_VERSION_linux_arm64.deb
+sudo dpkg -i orthanc-cli_VERSION_linux_arm64.deb
+```
+
+### CentOS/RHEL/Fedora (RPM Package)
+
+For RPM-based distributions (CentOS, RHEL, Fedora, Rocky Linux, etc.):
+
+```bash
+# Download the .rpm package (replace VERSION with actual version, e.g., 0.1.0)
+wget https://github.com/proencaj/orthanc-cli/releases/download/vVERSION/orthanc-cli_VERSION_linux_amd64.rpm
+
+# Install the package
+sudo rpm -i orthanc-cli_VERSION_linux_amd64.rpm
+
+# Or use dnf (Fedora/RHEL 8+)
+sudo dnf install orthanc-cli_VERSION_linux_amd64.rpm
+
+# Or use yum (CentOS/RHEL 7)
+sudo yum install orthanc-cli_VERSION_linux_amd64.rpm
+
+# Verify installation
+orthanc --version
+```
+
+For ARM64 systems:
+```bash
+wget https://github.com/proencaj/orthanc-cli/releases/download/vVERSION/orthanc-cli_VERSION_linux_arm64.rpm
+sudo rpm -i orthanc-cli_VERSION_linux_arm64.rpm
+```
+
+### Alpine Linux (APK Package)
+
+For Alpine Linux:
+
+```bash
+# Download the .apk package (replace VERSION with actual version)
+wget https://github.com/proencaj/orthanc-cli/releases/download/vVERSION/orthanc-cli_VERSION_linux_amd64.apk
+
+# Install the package
+sudo apk add --allow-untrusted orthanc-cli_VERSION_linux_amd64.apk
+
+# Verify installation
+orthanc --version
+```
+
+### Pre-built Binaries (Manual Installation)
+
+Download pre-built binaries for your platform from the [GitHub Releases](https://github.com/proencaj/orthanc-cli/releases) page.
+
+#### Linux (amd64)
+```bash
+curl -LO https://github.com/proencaj/orthanc-cli/releases/latest/download/orthanc-cli-VERSION-linux-amd64.tar.gz
+tar -xzf orthanc-cli-VERSION-linux-amd64.tar.gz
+sudo mv orthanc /usr/local/bin/
+```
+
+#### Linux (arm64)
+```bash
+curl -LO https://github.com/proencaj/orthanc-cli/releases/latest/download/orthanc-cli-VERSION-linux-arm64.tar.gz
+tar -xzf orthanc-cli-VERSION-linux-arm64.tar.gz
+sudo mv orthanc /usr/local/bin/
+```
+
+#### macOS (Intel)
+```bash
+curl -LO https://github.com/proencaj/orthanc-cli/releases/latest/download/orthanc-cli-VERSION-darwin-amd64.tar.gz
+tar -xzf orthanc-cli-VERSION-darwin-amd64.tar.gz
+sudo mv orthanc /usr/local/bin/
+```
+
+#### macOS (Apple Silicon)
+```bash
+curl -LO https://github.com/proencaj/orthanc-cli/releases/latest/download/orthanc-cli-VERSION-darwin-arm64.tar.gz
+tar -xzf orthanc-cli-VERSION-darwin-arm64.tar.gz
+sudo mv orthanc /usr/local/bin/
+```
+
+> **Note**: Replace `VERSION` with the actual version number (e.g., `v0.1.0`), or use `latest` to get the most recent release.
+
 ### Building from Source
 
 #### Prerequisites

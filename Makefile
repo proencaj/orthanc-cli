@@ -269,6 +269,29 @@ tidy: ## Tidy go.mod and go.sum
 
 ##@ Release & Distribution
 
+.PHONY: goreleaser-check
+goreleaser-check: ## Check if goreleaser is installed
+	@if ! command -v goreleaser >/dev/null 2>&1; then \
+		echo "$(RED)✗ goreleaser not installed$(NC)"; \
+		echo "  Install: https://goreleaser.com/install/"; \
+		echo "  Or run: brew install goreleaser"; \
+		exit 1; \
+	fi
+	@echo "$(GREEN)✓ goreleaser installed$(NC)"
+
+.PHONY: goreleaser-snapshot
+goreleaser-snapshot: goreleaser-check ## Build snapshot release locally (no tag required)
+	@echo "$(BLUE)Building snapshot release with GoReleaser...$(NC)"
+	@goreleaser release --snapshot --clean --skip=publish
+	@echo "$(GREEN)✓ Snapshot built in dist/ directory$(NC)"
+	@ls -lh dist/
+
+.PHONY: goreleaser-test
+goreleaser-test: goreleaser-check ## Test goreleaser configuration
+	@echo "$(BLUE)Testing GoReleaser configuration...$(NC)"
+	@goreleaser check
+	@echo "$(GREEN)✓ GoReleaser configuration is valid$(NC)"
+
 .PHONY: release-prepare
 release-prepare: ## Validate everything before building a release
 	@echo "$(BLUE)Validating release readiness...$(NC)"
@@ -473,3 +496,13 @@ install-tools: ## Install development tools (golangci-lint, staticcheck)
 	@go install honnef.co/go/tools/cmd/staticcheck@latest
 	@echo "$(GREEN)✓ Development tools installed$(NC)"
 	@echo "  Make sure $(shell go env GOPATH)/bin is in your PATH"
+
+.PHONY: install-goreleaser
+install-goreleaser: ## Install goreleaser
+	@echo "$(BLUE)Installing goreleaser...$(NC)"
+	@if command -v brew >/dev/null 2>&1; then \
+		brew install goreleaser; \
+	else \
+		echo "$(YELLOW)Homebrew not found. Please install goreleaser manually:$(NC)"; \
+		echo "  https://goreleaser.com/install/"; \
+	fi
