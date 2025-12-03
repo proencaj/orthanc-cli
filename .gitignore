@@ -55,3 +55,10 @@ TODO.md
 README.old.md
 Makefile.old
 *.old
+
+# Sensitive/private files
+*.asc
+*.key
+*.pem
+gpg-private-key.*
+RELEASE_NOTES_*.md

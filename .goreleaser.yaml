@@ -152,13 +152,13 @@ nfpms:
     package_name: orthanc-cli
 
     # Your app's vendor/author
-    vendor: José Proença
+    vendor: João Luiz Proença
 
     # Your app's homepage
     homepage: https://github.com/proencaj/orthanc-cli
 
     # Your app's maintainer
-    maintainer: José Proença <proenca.dev@gmail.com>
+    maintainer: João Luiz Proença <proenca.dev@gmail.com>
 
     # Your app's description
     description: |
@@ -173,7 +173,7 @@ nfpms:
     formats:
       - deb
       - rpm
-      - apk  # Alpine Linux
+      - apk # Alpine Linux
 
     # Binary location
     bindir: /usr/bin
@@ -234,7 +234,7 @@ brews:
   - # Tap repository
     repository:
       owner: proencaj
-      name: homebrew-tap
+      name: homebrew-orthanc-cli
       # Token for pushing to the tap repository
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
 
@@ -268,7 +268,6 @@ snapshot:
 # Metadata
 metadata:
   mod_timestamp: "{{ .CommitTimestamp }}"
-
 # Announce (can be extended for Slack, Discord, etc.)
 # announce:
 #   slack:
