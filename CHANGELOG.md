@@ -7,17 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2024-12-03
+
+### Added
+
+- GoReleaser automation for releases
+- Multi-platform package support (DEB, RPM, APK)
+- Homebrew tap integration
+- GitHub Actions release workflow
+- Consolidated release documentation (RELEASE_GUIDE.md)
+
+### Changed
+
+- Updated installation instructions in README.md
+- Improved Makefile with GoReleaser targets
+
 ## [0.1.0] - 2025-12-02
 
 ### Added
 
 #### Patient Management
+
 - List all patients on the Orthanc server
 - Get detailed patient information
 - Anonymize patient data
 - Remove patients with confirmation
 
 #### Study Management
+
 - List all studies on the Orthanc server
 - Get detailed study information
 - Download study archives as ZIP files
@@ -27,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - List all instances within a study
 
 #### Series Management
+
 - List all series on the Orthanc server
 - Get detailed series information
 - Download series archives as ZIP files
@@ -35,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - List all instances within a series
 
 #### Instance Management
+
 - List all instances on the Orthanc server
 - Get detailed instance information
 - Upload DICOM files to the server
@@ -43,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove instances with confirmation
 
 #### Modality Management
+
 - List all configured DICOM modalities
 - Get modality configuration details
 - Create new modality configurations
@@ -55,12 +75,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Store studies to modalities (C-STORE)
 
 #### System Tools
+
 - Advanced resource search using `/tools/find` endpoint
 - Server reset functionality
 - Server shutdown commands
 - Dynamic log level adjustment
 
 #### Configuration Management
+
 - Initialize configuration file (`~/.orthanc-cli.yaml`)
 - Set configuration values interactively
 - Get specific configuration values
@@ -70,6 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Secure password storage and optional masking
 
 #### General Features
+
 - Cross-platform support (Linux and macOS, amd64 and arm64)
 - HTTPS support with optional TLS verification control
 - Basic authentication support
@@ -80,6 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build automation via Makefile
 
 ### Developer Features
+
 - Built on [gorthanc](https://github.com/proencaj/gorthanc) client library
 - Modular command structure for easy extension
 - Cobra CLI framework integration
@@ -87,6 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Clean separation of concerns (commands, client, config)
 
 ### Documentation
+
 - Comprehensive README with usage examples
 - Configuration guide
 - Quick start guide
