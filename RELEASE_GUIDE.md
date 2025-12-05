@@ -42,7 +42,7 @@ Orthanc CLI uses [GoReleaser](https://goreleaser.com) for automated releases. Wh
 ### Required for Automated Releases (GitHub Actions)
 
 1. **Homebrew Tap Repository**
-   - Create a public repository: `proencaj/homebrew-tap`
+   - Create a public repository: `proencaj/homebrew-orthanc-cli`
    - GitHub: https://github.com/new
 
 2. **GitHub Personal Access Token**
@@ -186,7 +186,7 @@ git push origin $VERSION
    - RPM packages
    - APK packages
    - SHA256SUMS.txt
-3. Check Homebrew tap: https://github.com/proencaj/homebrew-tap
+3. Check Homebrew tap: https://github.com/proencaj/homebrew-orthanc-cli
 
 #### 6. Test Installation
 
@@ -263,7 +263,7 @@ Each archive contains:
 ### Other Artifacts
 
 - `SHA256SUMS.txt` - Checksums for all artifacts
-- Homebrew formula (auto-updated in `proencaj/homebrew-tap`)
+- Homebrew formula (auto-updated in `proencaj/homebrew-orthanc-cli`)
 
 ### Release Notes
 
@@ -280,7 +280,7 @@ GitHub Release includes:
 ### Homebrew (macOS/Linux)
 
 ```bash
-brew install proencaj/tap/orthanc-cli
+brew install proencaj/orthanc-cli
 ```
 
 ### Debian/Ubuntu
@@ -367,7 +367,7 @@ permissions:
 
 1. Check `HOMEBREW_TAP_GITHUB_TOKEN` secret exists
 2. Verify token has `repo` scope
-3. Confirm `homebrew-tap` repository exists and is public
+3. Confirm `homebrew-orthanc-cli` repository exists and is public
 4. Check GitHub Actions logs for errors
 
 ### Want to Delete/Redo a Release

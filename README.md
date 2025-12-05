@@ -1,6 +1,6 @@
 # Orthanc CLI
 
-A powerful command-line interface for managing Orthanc DICOM servers, designed to streamline daily workflows in medical imaging environments.
+A command-line interface for managing Orthanc DICOM servers, designed to streamline daily workflows in medical imaging environments.
 
 ## Why Orthanc CLI?
 
@@ -35,22 +35,26 @@ Whether you're a radiologist managing studies, a developer building PACS integra
 ## Features
 
 ### Resource Management
+
 - **Patients**: List, query, retrieve, anonymize, and delete patient records
 - **Studies**: Full CRUD operations, archiving, and batch processing
 - **Series**: Manage series, list instances, download archives
 - **Instances**: Upload, download, anonymize, and manage individual DICOM files
 
 ### DICOM Networking
+
 - **Modality Configuration**: Create, update, and manage DICOM modalities
 - **DICOM Operations**: C-ECHO, C-FIND, C-MOVE, C-GET, and C-STORE support
 - **Batch Transfer**: Move or retrieve studies across modalities efficiently
 
 ### System Operations
+
 - **Server Management**: Monitor system status, adjust log levels, perform maintenance
 - **Advanced Search**: Powerful query capabilities using Orthanc's `/tools/find` endpoint
 - **Configuration**: Simple, secure credential management with environment variable support
 
 ### Developer-Friendly
+
 - **Pipeline Integration**: Exit codes and JSON output for scripting
 - **Cross-Platform**: Linux and macOS support (amd64 and arm64)
 - **Secure**: HTTPS support, credential encryption, environment variable overrides
@@ -63,7 +67,8 @@ Whether you're a radiologist managing studies, a developer building PACS integra
 The easiest way to install Orthanc CLI on macOS or Linux is via Homebrew:
 
 ```bash
-brew install proencaj/tap/orthanc-cli
+brew tap proencaj/orthanc-cli
+brew install orthanc-cli
 ```
 
 To upgrade to the latest version:
@@ -88,6 +93,7 @@ orthanc --version
 ```
 
 For ARM64 systems:
+
 ```bash
 wget https://github.com/proencaj/orthanc-cli/releases/download/vVERSION/orthanc-cli_VERSION_linux_arm64.deb
 sudo dpkg -i orthanc-cli_VERSION_linux_arm64.deb
@@ -115,6 +121,7 @@ orthanc --version
 ```
 
 For ARM64 systems:
+
 ```bash
 wget https://github.com/proencaj/orthanc-cli/releases/download/vVERSION/orthanc-cli_VERSION_linux_arm64.rpm
 sudo rpm -i orthanc-cli_VERSION_linux_arm64.rpm
@@ -140,6 +147,7 @@ orthanc --version
 Download pre-built binaries for your platform from the [GitHub Releases](https://github.com/proencaj/orthanc-cli/releases) page.
 
 #### Linux (amd64)
+
 ```bash
 curl -LO https://github.com/proencaj/orthanc-cli/releases/latest/download/orthanc-cli-VERSION-linux-amd64.tar.gz
 tar -xzf orthanc-cli-VERSION-linux-amd64.tar.gz
@@ -147,6 +155,7 @@ sudo mv orthanc /usr/local/bin/
 ```
 
 #### Linux (arm64)
+
 ```bash
 curl -LO https://github.com/proencaj/orthanc-cli/releases/latest/download/orthanc-cli-VERSION-linux-arm64.tar.gz
 tar -xzf orthanc-cli-VERSION-linux-arm64.tar.gz
@@ -154,6 +163,7 @@ sudo mv orthanc /usr/local/bin/
 ```
 
 #### macOS (Intel)
+
 ```bash
 curl -LO https://github.com/proencaj/orthanc-cli/releases/latest/download/orthanc-cli-VERSION-darwin-amd64.tar.gz
 tar -xzf orthanc-cli-VERSION-darwin-amd64.tar.gz
@@ -161,6 +171,7 @@ sudo mv orthanc /usr/local/bin/
 ```
 
 #### macOS (Apple Silicon)
+
 ```bash
 curl -LO https://github.com/proencaj/orthanc-cli/releases/latest/download/orthanc-cli-VERSION-darwin-arm64.tar.gz
 tar -xzf orthanc-cli-VERSION-darwin-arm64.tar.gz
@@ -172,6 +183,7 @@ sudo mv orthanc /usr/local/bin/
 ### Building from Source
 
 #### Prerequisites
+
 - Go 1.25 or later
 - Make (optional, for convenience)
 
@@ -205,6 +217,7 @@ make build-all
 ```
 
 This creates binaries in the `bin/` directory for:
+
 - Linux (amd64, arm64)
 - macOS (amd64, arm64, including Apple Silicon)
 
@@ -344,7 +357,7 @@ orthanc:
   url: "http://localhost:8042"
   username: "orthanc"
   password: "orthanc"
-  insecure: false  # Set to true to skip TLS verification
+  insecure: false # Set to true to skip TLS verification
 ```
 
 ### Environment Variables
@@ -392,6 +405,7 @@ This project is built on top of excellent open-source libraries:
 Contributions are welcome! Whether it's bug reports, feature requests, documentation improvements, or code contributions, all help is appreciated.
 
 Please feel free to:
+
 - Open issues for bugs or feature requests
 - Submit pull requests with improvements
 - Improve documentation

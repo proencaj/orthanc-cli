@@ -115,7 +115,7 @@ release:
 
     #### Homebrew (macOS/Linux)
     ```bash
-    brew install proencaj/tap/orthanc-cli
+    brew install proencaj/orthanc-cli
     ```
 
     #### Debian/Ubuntu (.deb)
@@ -190,16 +190,10 @@ nfpms:
     # Package dependencies (none for this static binary)
     dependencies: []
 
-    # Recommended packages
-    recommends: []
-
-    # Suggested packages
-    suggests: []
-
-    # Conflicts
+    # Conflicts with other packages
     conflicts: []
 
-    # Replaces
+    # Replaces other packages
     replaces: []
 
     # Override default for rpm
@@ -218,7 +212,9 @@ nfpms:
       compression: xz
       fields:
         Section: utils
-        Priority: optional
+      # DEB-specific fields (not used for static binary)
+      # recommends: []
+      # suggests: []
 
     # Scripts (optional - uncomment if needed)
     # scripts:
