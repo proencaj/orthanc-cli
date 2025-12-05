@@ -210,8 +210,8 @@ nfpms:
       # signature:
       #   key_file: "{{ .Env.GPG_KEY_FILE }}"
       compression: xz
-      fields:
-        Section: utils
+      # Note: Section and Priority are set by GoReleaser by default
+      # Setting them explicitly causes duplicate field errors in dpkg
       # DEB-specific fields (not used for static binary)
       # recommends: []
       # suggests: []
