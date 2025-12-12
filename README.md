@@ -89,7 +89,7 @@ wget https://github.com/proencaj/orthanc-cli/releases/download/vVERSION/orthanc-
 sudo dpkg -i orthanc-cli_VERSION_linux_amd64.deb
 
 # Verify installation
-orthanc --version
+orthanc version
 ```
 
 For ARM64 systems:
@@ -117,7 +117,7 @@ sudo dnf install orthanc-cli_VERSION_linux_amd64.rpm
 sudo yum install orthanc-cli_VERSION_linux_amd64.rpm
 
 # Verify installation
-orthanc --version
+orthanc version
 ```
 
 For ARM64 systems:
@@ -139,7 +139,7 @@ wget https://github.com/proencaj/orthanc-cli/releases/download/vVERSION/orthanc-
 sudo apk add --allow-untrusted orthanc-cli_VERSION_linux_amd64.apk
 
 # Verify installation
-orthanc --version
+orthanc version
 ```
 
 ### Pre-built Binaries (Manual Installation)
