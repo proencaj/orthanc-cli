@@ -18,5 +18,13 @@ func NewConfigCommand() *cobra.Command {
 	configCmd.AddCommand(NewGetCommand())
 	configCmd.AddCommand(NewListCommand())
 
+	// Context management commands
+	configCmd.AddCommand(NewGetContextsCommand())
+	configCmd.AddCommand(NewCurrentContextCommand())
+	configCmd.AddCommand(NewUseContextCommand())
+	configCmd.AddCommand(NewSetContextCommand())
+	configCmd.AddCommand(NewDeleteContextCommand())
+	configCmd.AddCommand(NewRenameContextCommand())
+
 	return configCmd
 }

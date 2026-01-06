@@ -233,10 +233,20 @@ This creates `~/.orthanc-cli.yaml` with default settings.
 
 ### 2. Configure Your Orthanc Server
 
+You can configure using the simple `set` command (updates the current context):
+
 ```bash
 orthanc config set orthanc.url http://localhost:8042
 orthanc config set orthanc.username orthanc
 orthanc config set orthanc.password orthanc
+```
+
+Or create named contexts for multiple servers:
+
+```bash
+orthanc config set-context local --url http://localhost:8042 --username orthanc --password orthanc
+orthanc config set-context production --url https://orthanc.prod.com --username admin --password secret
+orthanc config use-context local
 ```
 
 ### 3. Start Using the CLI
@@ -259,6 +269,44 @@ orthanc modalities echo <modality-name>
 ```
 
 ## Usage Examples
+
+### Context Management
+
+Manage multiple Orthanc server configurations using contexts (similar to kubectl):
+
+```bash
+# List all available contexts
+orthanc config get-contexts
+
+# Show current active context
+orthanc config current-context
+
+# Create a new context
+orthanc config set-context local --url http://localhost:8042 --username orthanc --password orthanc
+
+# Create a production context
+orthanc config set-context production --url https://orthanc.prod.com --username admin --password secret
+
+# Create a dev context with TLS verification disabled
+orthanc config set-context dev --url http://dev.orthanc.com:8042 --username dev --password dev --insecure
+
+# Switch to a different context
+orthanc config use-context production
+
+# Update a context
+orthanc config set-context production --username newadmin
+
+# Rename a context
+orthanc config rename-context dev staging
+
+# Delete a context (cannot delete current context)
+orthanc config delete-context staging
+
+# Get/set config values in the current context
+orthanc config get orthanc.url
+orthanc config set orthanc.username newuser
+orthanc config list
+```
 
 ### Patient Management
 
@@ -350,19 +398,37 @@ orthanc tools shutdown
 
 ### Configuration File
 
-The CLI uses a configuration file at `~/.orthanc-cli.yaml`:
+The CLI uses a configuration file at `~/.orthanc-cli.yaml` with support for multiple contexts:
 
 ```yaml
-orthanc:
-  url: "http://localhost:8042"
-  username: "orthanc"
-  password: "orthanc"
-  insecure: false # Set to true to skip TLS verification
+# Multiple server configurations
+contexts:
+  local:
+    orthanc:
+      url: "http://localhost:8042"
+      username: "orthanc"
+      password: "orthanc"
+      insecure: false
+  production:
+    orthanc:
+      url: "https://orthanc.prod.com"
+      username: "admin"
+      password: "secret"
+      insecure: false
+
+# The currently active context
+current-context: local
+
+# Global output configuration
+output:
+  json: false
 ```
+
+The CLI automatically migrates old single-server configurations to the new multi-context format.
 
 ### Environment Variables
 
-Override configuration with environment variables (useful for CI/CD):
+Override the current context's configuration with environment variables (useful for CI/CD):
 
 ```bash
 export ORTHANC_URL="http://localhost:8042"
@@ -371,15 +437,25 @@ export ORTHANC_PASSWORD="secret"
 export ORTHANC_INSECURE="false"
 ```
 
-Environment variables take precedence over the config file.
+Environment variables take precedence over the current context's values, allowing you to temporarily override settings without modifying the config file.
+
+Example:
+
+```bash
+# Use production context but override the URL
+orthanc config use-context production
+ORTHANC_URL=http://localhost:8042 orthanc studies list
+```
 
 ### Custom Config File
 
-Use a different config file for multiple Orthanc servers:
+You can also use a different config file (though contexts are the recommended approach):
 
 ```bash
-orthanc --config /path/to/prod-config.yaml studies list
+orthanc --config /path/to/alternate-config.yaml studies list
 ```
+
+**Note**: Using contexts within a single config file is generally more convenient than managing multiple config files.
 
 ## Roadmap
 
