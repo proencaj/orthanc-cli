@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 
+	internalConfig "github.com/proencaj/orthanc-cli/internal/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -11,8 +12,8 @@ import (
 func NewGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get <key>",
-		Short: "Get a configuration value",
-		Long: `Get a configuration value from the config file.
+		Short: "Get a configuration value from the current context",
+		Long: `Get a configuration value from the current context.
 
 Available keys:
   orthanc.url       - Orthanc server URL
@@ -42,16 +43,49 @@ Examples:
 				return fmt.Errorf("invalid configuration key: %s\nValid keys: orthanc.url, orthanc.username, orthanc.password, orthanc.insecure, output.json", key)
 			}
 
-			value := viper.Get(key)
-			if value == nil {
-				fmt.Printf("%s is not set\n", key)
-				return nil
-			}
+			// For context-specific keys, get from current context
+			if key != "output.json" {
+				cfgFile := viper.ConfigFileUsed()
+				cfg, err := internalConfig.LoadConfig(cfgFile)
+				if err != nil {
+					return fmt.Errorf("failed to load config: %w", err)
+				}
 
-			// Mask password for security
-			if key == "orthanc.password" {
-				fmt.Printf("%s = ********\n", key)
+				orthancCfg, err := cfg.GetCurrentContext()
+				if err != nil {
+					return fmt.Errorf("failed to get current context: %w", err)
+				}
+
+				var value interface{}
+				switch key {
+				case "orthanc.url":
+					value = orthancCfg.URL
+				case "orthanc.username":
+					value = orthancCfg.Username
+				case "orthanc.password":
+					if orthancCfg.Password == "" {
+						fmt.Printf("%s is not set\n", key)
+						return nil
+					}
+					fmt.Printf("%s = ********\n", key)
+					return nil
+				case "orthanc.insecure":
+					value = orthancCfg.Insecure
+				}
+
+				if value == "" || value == nil {
+					fmt.Printf("%s is not set\n", key)
+					return nil
+				}
+
+				fmt.Printf("%s = %v\n", key, value)
 			} else {
+				// output.json is global
+				value := viper.Get(key)
+				if value == nil {
+					fmt.Printf("%s is not set\n", key)
+					return nil
+				}
 				fmt.Printf("%s = %v\n", key, value)
 			}
 

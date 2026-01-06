@@ -22,21 +22,27 @@ func NewClient(cfg *config.Config) (*Client, error) {
 		return nil, fmt.Errorf("configuration is required")
 	}
 
+	// Get the current context configuration
+	orthancCfg, err := cfg.GetCurrentContext()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get current context: %w", err)
+	}
+
 	// Validate required configuration
-	if cfg.Orthanc.URL == "" {
-		return nil, fmt.Errorf("orthanc URL is required (use 'orthanc config set orthanc.url <url>')")
+	if orthancCfg.URL == "" {
+		return nil, fmt.Errorf("orthanc URL is required (use 'orthanc config set-context %s --url <url>')", cfg.CurrentContext)
 	}
 
 	// Create client options
 	var opts []gorthanc.ClientOption
 
 	// Add basic authentication if credentials are provided
-	if cfg.Orthanc.Username != "" && cfg.Orthanc.Password != "" {
-		opts = append(opts, gorthanc.WithBasicAuth(cfg.Orthanc.Username, cfg.Orthanc.Password))
+	if orthancCfg.Username != "" && orthancCfg.Password != "" {
+		opts = append(opts, gorthanc.WithBasicAuth(orthancCfg.Username, orthancCfg.Password))
 	}
 
 	// Create custom HTTP client if insecure mode is enabled
-	if cfg.Orthanc.Insecure {
+	if orthancCfg.Insecure {
 		transport := &http.Transport{
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true,
@@ -50,7 +56,7 @@ func NewClient(cfg *config.Config) (*Client, error) {
 	}
 
 	// Create the gorthanc client
-	client, err := gorthanc.NewClient(cfg.Orthanc.URL, opts...)
+	client, err := gorthanc.NewClient(orthancCfg.URL, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create orthanc client: %w", err)
 	}
@@ -68,5 +74,9 @@ func (c *Client) GetConfig() *config.Config {
 
 // URL returns the Orthanc server URL
 func (c *Client) URL() string {
-	return c.config.Orthanc.URL
+	orthancCfg, err := c.config.GetCurrentContext()
+	if err != nil {
+		return ""
+	}
+	return orthancCfg.URL
 }

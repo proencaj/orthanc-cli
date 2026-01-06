@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strconv"
 
+	internalConfig "github.com/proencaj/orthanc-cli/internal/config"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -14,8 +15,8 @@ import (
 func NewSetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "set <key> <value>",
-		Short: "Set a configuration value",
-		Long: `Set a configuration value in the config file.
+		Short: "Set a configuration value in the current context",
+		Long: `Set a configuration value in the current context.
 
 Available keys:
   orthanc.url       - Orthanc server URL (e.g., http://localhost:8042)
@@ -48,15 +49,45 @@ Examples:
 				return fmt.Errorf("invalid configuration key: %s\nValid keys: orthanc.url, orthanc.username, orthanc.password, orthanc.insecure, output.json", key)
 			}
 
-			// Special handling for boolean values
-			if key == "orthanc.insecure" || key == "output.json" {
+			// Load the config
+			cfgFile := viper.ConfigFileUsed()
+			cfg, err := internalConfig.LoadConfig(cfgFile)
+			if err != nil {
+				return fmt.Errorf("failed to load config: %w", err)
+			}
+
+			// For context-specific keys, update current context
+			if key != "output.json" {
+				if cfg.CurrentContext == "" {
+					return fmt.Errorf("no current context set (use 'orthanc config set-context <name>' to create one)")
+				}
+
+				ctx, exists := cfg.Contexts[cfg.CurrentContext]
+				if !exists {
+					return fmt.Errorf("current context %q not found", cfg.CurrentContext)
+				}
+
+				switch key {
+				case "orthanc.url":
+					ctx.Orthanc.URL = value
+				case "orthanc.username":
+					ctx.Orthanc.Username = value
+				case "orthanc.password":
+					ctx.Orthanc.Password = value
+				case "orthanc.insecure":
+					boolValue, err := strconv.ParseBool(value)
+					if err != nil {
+						return fmt.Errorf("invalid boolean value for %s: %s (use true or false)", key, value)
+					}
+					ctx.Orthanc.Insecure = boolValue
+				}
+			} else {
+				// output.json is global
 				boolValue, err := strconv.ParseBool(value)
 				if err != nil {
 					return fmt.Errorf("invalid boolean value for %s: %s (use true or false)", key, value)
 				}
-				viper.Set(key, boolValue)
-			} else {
-				viper.Set(key, value)
+				cfg.Output.JSON = boolValue
 			}
 
 			// Determine config file path
@@ -69,9 +100,9 @@ Examples:
 				configFile = filepath.Join(home, ".orthanc-cli.yaml")
 			}
 
-			// Write config
-			if err := viper.WriteConfigAs(configFile); err != nil {
-				return fmt.Errorf("failed to write config file: %w", err)
+			// Save the updated config
+			if err := internalConfig.SaveConfigToFile(cfg, configFile); err != nil {
+				return fmt.Errorf("failed to save config: %w", err)
 			}
 
 			// Mask password for security
@@ -81,6 +112,9 @@ Examples:
 			}
 
 			fmt.Printf("✓ Set %s = %s\n", key, displayValue)
+			if key != "output.json" {
+				fmt.Printf("  Context: %s\n", cfg.CurrentContext)
+			}
 			fmt.Printf("  Config file: %s\n", configFile)
 
 			return nil
