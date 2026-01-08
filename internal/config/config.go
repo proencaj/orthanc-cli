@@ -162,6 +162,22 @@ func migrateConfig(config *Config) error {
 	return nil
 }
 
+// ConfigExists checks if a configuration file already exists at the given path
+func ConfigExists(path string) (bool, string, error) {
+	if path == "" {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return false, "", err
+		}
+		path = filepath.Join(home, ".orthanc-cli.yaml")
+	}
+
+	if _, err := os.Stat(path); err == nil {
+		return true, path, nil
+	}
+	return false, path, nil
+}
+
 // SaveConfig creates a default configuration file
 func SaveConfig(path string) error {
 	if path == "" {
