@@ -378,6 +378,58 @@ orthanc modalities retrieve REMOTE_PACS <study-id>
 orthanc modalities store REMOTE_PACS <study-id>
 ```
 
+### DICOMweb Servers
+
+```bash
+# List all configured DICOMweb servers
+orthanc servers list
+
+# List servers with full details
+orthanc servers list --expand
+
+# List servers in JSON format
+orthanc servers list --json
+
+# Get details for a specific server
+orthanc servers get my-pacs
+
+# Get server details in JSON format
+orthanc servers get my-pacs --json
+
+# Create a new DICOMweb server
+orthanc servers create my-pacs --url https://pacs.example.com/dicom-web
+
+# Create with authentication
+orthanc servers create my-pacs \
+  --url https://pacs.example.com/dicom-web \
+  --username admin \
+  --password secret
+
+# Create with all options
+orthanc servers create my-pacs \
+  --url https://pacs.example.com/dicom-web \
+  --username admin \
+  --password secret \
+  --has-delete \
+  --chunked-transfers \
+  --has-wado-rs-universal-transfer-syntax
+
+# Create server from JSON file
+orthanc servers create my-pacs --file server.json
+
+# Update an existing server
+orthanc servers update my-pacs --url https://new-pacs.example.com/dicom-web
+
+# Update with new credentials
+orthanc servers update my-pacs --username newadmin --password newsecret
+
+# Remove a server (with confirmation prompt)
+orthanc servers remove my-pacs
+
+# Remove a server without confirmation
+orthanc servers remove my-pacs --force
+```
+
 ### System Administration
 
 ```bash

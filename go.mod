@@ -3,7 +3,7 @@ module github.com/proencaj/orthanc-cli
 go 1.25.4
 
 require (
-	github.com/proencaj/gorthanc v0.3.1
+	github.com/proencaj/gorthanc v0.4.0
 	github.com/spf13/cobra v1.10.1
 	github.com/spf13/viper v1.21.0
 )
