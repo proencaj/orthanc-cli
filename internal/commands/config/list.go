@@ -34,7 +34,7 @@ func NewListCommand() *cobra.Command {
 			if cfg.CurrentContext != "" {
 				fmt.Printf("Current context: %s\n\n", cfg.CurrentContext)
 			} else {
-				fmt.Println("Current context: (not set)\n")
+				fmt.Println("Current context: (not set)")
 			}
 
 			// Get current context config
