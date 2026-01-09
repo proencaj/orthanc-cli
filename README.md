@@ -50,7 +50,7 @@ Whether you're a radiologist managing studies, a developer building PACS integra
 ### DICOMweb Integration
 
 - **Server Management**: Configure and manage remote DICOMweb servers
-- **WADO-RS/STOW-RS/QIDO-RS**: Full DICOMweb protocol support via configured servers
+- **WADO-RS/QIDO-RS**: Full DICOMweb protocol support via configured servers (STOW not implemented yet)
 
 ### System Operations
 
@@ -429,56 +429,56 @@ orthanc servers remove my-pacs
 orthanc servers remove my-pacs --force
 ```
 
-### DICOMweb Servers
+### DICOMweb Operations
 
 ```bash
-# List all configured DICOMweb servers
-orthanc servers list
+# QIDO-RS: Query for studies
+orthanc dicomweb qido --level studies
 
-# List servers with full details
-orthanc servers list --expand
+# QIDO-RS: Search studies by patient name (supports wildcards)
+orthanc dicomweb qido --level studies --patient-name "Smith*"
 
-# List servers in JSON format
-orthanc servers list --json
+# QIDO-RS: Search studies by date range
+orthanc dicomweb qido --level studies --study-date 20230101-20231231
 
-# Get details for a specific server
-orthanc servers get my-pacs
+# QIDO-RS: Search for all CT series
+orthanc dicomweb qido --level series --modality CT
 
-# Get server details in JSON format
-orthanc servers get my-pacs --json
+# QIDO-RS: Search series within a specific study
+orthanc dicomweb qido --level series --study-uid 1.2.840.113619.2.55.3.123456
 
-# Create a new DICOMweb server
-orthanc servers create my-pacs --url https://pacs.example.com/dicom-web
+# QIDO-RS: Search instances with pagination
+orthanc dicomweb qido --level instances --limit 10 --offset 20
 
-# Create with authentication
-orthanc servers create my-pacs \
-  --url https://pacs.example.com/dicom-web \
-  --username admin \
-  --password secret
+# WADO-RS: Retrieve a complete study as a zip archive
+orthanc dicomweb wado-rs --study-uid 1.2.840.113619.2.55.3.123456 --output study.zip
 
-# Create with all options
-orthanc servers create my-pacs \
-  --url https://pacs.example.com/dicom-web \
-  --username admin \
-  --password secret \
-  --has-delete \
-  --chunked-transfers \
-  --has-wado-rs-universal-transfer-syntax
+# WADO-RS: Retrieve a study and extract files to a directory
+orthanc dicomweb wado-rs --study-uid 1.2.840.113619.2.55.3.123456 --output-dir ./study_files/
 
-# Create server from JSON file
-orthanc servers create my-pacs --file server.json
+# WADO-RS: Retrieve a series
+orthanc dicomweb wado-rs --study-uid 1.2.3 --series-uid 1.2.3.4 --output series.zip
 
-# Update an existing server
-orthanc servers update my-pacs --url https://new-pacs.example.com/dicom-web
+# WADO-RS: Retrieve a single instance
+orthanc dicomweb wado-rs --study-uid 1.2.3 --series-uid 1.2.3.4 --instance-uid 1.2.3.4.5 --output instance.dcm
 
-# Update with new credentials
-orthanc servers update my-pacs --username newadmin --password newsecret
+# WADO-RS: Retrieve study metadata as JSON
+orthanc dicomweb wado-rs --study-uid 1.2.3 --metadata
 
-# Remove a server (with confirmation prompt)
-orthanc servers remove my-pacs
+# WADO-RS: Retrieve rendered instance as JPEG
+orthanc dicomweb wado-rs --study-uid 1.2.3 --series-uid 1.2.3.4 --instance-uid 1.2.3.4.5 \
+  --rendered --accept image/jpeg --output image.jpg
 
-# Remove a server without confirmation
-orthanc servers remove my-pacs --force
+# WADO-RS: Retrieve specific frames
+orthanc dicomweb wado-rs --study-uid 1.2.3 --series-uid 1.2.3.4 --instance-uid 1.2.3.4.5 \
+  --frames 1,2,3 --output-dir ./frames/
+
+# WADO-URI: Retrieve a DICOM instance (legacy protocol)
+orthanc dicomweb wado --study-uid 1.2.3 --series-uid 1.2.3.4 --object-uid 1.2.3.4.5 --output instance.dcm
+
+# WADO-URI: Retrieve as JPEG with window settings
+orthanc dicomweb wado --study-uid 1.2.3 --series-uid 1.2.3.4 --object-uid 1.2.3.4.5 \
+  --content-type image/jpeg --window-center 40 --window-width 400 --output image.jpg
 ```
 
 ### System Administration
