@@ -62,3 +62,6 @@ Makefile.old
 *.pem
 gpg-private-key.*
 RELEASE_NOTES_*.md
+
+tmp
+tmp/*

@@ -47,6 +47,11 @@ Whether you're a radiologist managing studies, a developer building PACS integra
 - **DICOM Operations**: C-ECHO, C-FIND, C-MOVE, C-GET, and C-STORE support
 - **Batch Transfer**: Move or retrieve studies across modalities efficiently
 
+### DICOMweb Integration
+
+- **Server Management**: Configure and manage remote DICOMweb servers
+- **WADO-RS/QIDO-RS**: Full DICOMweb protocol support via configured servers (STOW not implemented yet)
+
 ### System Operations
 
 - **Server Management**: Monitor system status, adjust log levels, perform maintenance
@@ -378,7 +383,7 @@ orthanc modalities retrieve REMOTE_PACS <study-id>
 orthanc modalities store REMOTE_PACS <study-id>
 ```
 
-### DICOMweb Servers
+### DICOMweb Server Management
 
 ```bash
 # List all configured DICOMweb servers
@@ -387,14 +392,8 @@ orthanc servers list
 # List servers with full details
 orthanc servers list --expand
 
-# List servers in JSON format
-orthanc servers list --json
-
-# Get details for a specific server
+# Get details of a specific server
 orthanc servers get my-pacs
-
-# Get server details in JSON format
-orthanc servers get my-pacs --json
 
 # Create a new DICOMweb server
 orthanc servers create my-pacs --url https://pacs.example.com/dicom-web
@@ -414,20 +413,72 @@ orthanc servers create my-pacs \
   --chunked-transfers \
   --has-wado-rs-universal-transfer-syntax
 
-# Create server from JSON file
-orthanc servers create my-pacs --file server.json
-
 # Update an existing server
 orthanc servers update my-pacs --url https://new-pacs.example.com/dicom-web
 
-# Update with new credentials
-orthanc servers update my-pacs --username newadmin --password newsecret
+# Enable DELETE support on a server
+orthanc servers update my-pacs --has-delete
+
+# Disable chunked transfers (for Orthanc <= 1.5.6)
+orthanc servers update my-pacs --chunked-transfers=false
 
 # Remove a server (with confirmation prompt)
 orthanc servers remove my-pacs
 
-# Remove a server without confirmation
+# Remove without confirmation
 orthanc servers remove my-pacs --force
+```
+
+### DICOMweb Operations
+
+```bash
+# QIDO-RS: Query for studies
+orthanc dicomweb qido --level studies
+
+# QIDO-RS: Search studies by patient name (supports wildcards)
+orthanc dicomweb qido --level studies --patient-name "Smith*"
+
+# QIDO-RS: Search studies by date range
+orthanc dicomweb qido --level studies --study-date 20230101-20231231
+
+# QIDO-RS: Search for all CT series
+orthanc dicomweb qido --level series --modality CT
+
+# QIDO-RS: Search series within a specific study
+orthanc dicomweb qido --level series --study-uid 1.2.840.113619.2.55.3.123456
+
+# QIDO-RS: Search instances with pagination
+orthanc dicomweb qido --level instances --limit 10 --offset 20
+
+# WADO-RS: Retrieve a complete study as a zip archive
+orthanc dicomweb wado-rs --study-uid 1.2.840.113619.2.55.3.123456 --output study.zip
+
+# WADO-RS: Retrieve a study and extract files to a directory
+orthanc dicomweb wado-rs --study-uid 1.2.840.113619.2.55.3.123456 --output-dir ./study_files/
+
+# WADO-RS: Retrieve a series
+orthanc dicomweb wado-rs --study-uid 1.2.3 --series-uid 1.2.3.4 --output series.zip
+
+# WADO-RS: Retrieve a single instance
+orthanc dicomweb wado-rs --study-uid 1.2.3 --series-uid 1.2.3.4 --instance-uid 1.2.3.4.5 --output instance.dcm
+
+# WADO-RS: Retrieve study metadata as JSON
+orthanc dicomweb wado-rs --study-uid 1.2.3 --metadata
+
+# WADO-RS: Retrieve rendered instance as JPEG
+orthanc dicomweb wado-rs --study-uid 1.2.3 --series-uid 1.2.3.4 --instance-uid 1.2.3.4.5 \
+  --rendered --accept image/jpeg --output image.jpg
+
+# WADO-RS: Retrieve specific frames
+orthanc dicomweb wado-rs --study-uid 1.2.3 --series-uid 1.2.3.4 --instance-uid 1.2.3.4.5 \
+  --frames 1,2,3 --output-dir ./frames/
+
+# WADO-URI: Retrieve a DICOM instance (legacy protocol)
+orthanc dicomweb wado --study-uid 1.2.3 --series-uid 1.2.3.4 --object-uid 1.2.3.4.5 --output instance.dcm
+
+# WADO-URI: Retrieve as JPEG with window settings
+orthanc dicomweb wado --study-uid 1.2.3 --series-uid 1.2.3.4 --object-uid 1.2.3.4.5 \
+  --content-type image/jpeg --window-center 40 --window-width 400 --output image.jpg
 ```
 
 ### System Administration
