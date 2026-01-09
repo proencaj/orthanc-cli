@@ -7,6 +7,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2025-01-09
+
+### Added
+
+#### DICOMweb Server Management
+
+- List all configured DICOMweb servers (`orthanc servers list`)
+- Get detailed information about a DICOMweb server (`orthanc servers get`)
+- Create new DICOMweb server configurations (`orthanc servers create`)
+- Update existing DICOMweb server configurations (`orthanc servers update`)
+- Remove DICOMweb server configurations with confirmation prompt (`orthanc servers remove`)
+- Support for authentication, chunked transfers, and WADO-RS universal transfer syntax options
+
+#### DICOMweb Operations
+
+- QIDO-RS: Query for studies, series, and instances with flexible filters
+  - Patient name, ID, accession number, study date filters
+  - Modality and series number filters
+  - Pagination support (limit/offset)
+  - Fuzzy matching option
+- WADO-RS: Retrieve DICOM objects via RESTful services
+  - Download complete studies or series as ZIP archives
+  - Extract files to a directory
+  - Retrieve study/series/instance metadata as JSON
+  - Retrieve rendered instances as JPEG/PNG
+  - Retrieve specific frames from multi-frame instances
+- WADO-URI: Legacy protocol support for retrieving DICOM instances
+  - Content type negotiation (DICOM, JPEG, PNG)
+  - Window center/width settings for rendered output
+  - Frame selection for multi-frame instances
+
+#### Multi-Context Configuration
+
+- Support for multiple Orthanc server configurations using contexts (similar to kubectl)
+- Create, update, and delete named contexts (`orthanc config set-context`, `orthanc config delete-context`)
+- Switch between contexts (`orthanc config use-context`)
+- List all available contexts (`orthanc config get-contexts`)
+- Show current active context (`orthanc config current-context`)
+- Rename contexts (`orthanc config rename-context`)
+- Automatic migration from old single-server configuration format
+
+#### Configuration Improvements
+
+- Confirmation prompt when overwriting existing configuration file during init
+- Check if configuration file already exists before creating
+
+### Changed
+
+- Upgraded gorthanc dependency to v0.4.0
+- Updated README with DICOMweb examples and multi-context documentation
+
+### Fixed
+
+- Fixed installation verification command in README (thanks @Pandemonium1986)
+
 ## [0.2.0] - 2024-12-03
 
 ### Added
@@ -118,5 +173,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Development setup instructions
 - MIT License
 
-[unreleased]: https://github.com/proencaj/orthanc-cli/compare/v0.1.0...HEAD
+[unreleased]: https://github.com/proencaj/orthanc-cli/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/proencaj/orthanc-cli/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/proencaj/orthanc-cli/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/proencaj/orthanc-cli/releases/tag/v0.1.0
