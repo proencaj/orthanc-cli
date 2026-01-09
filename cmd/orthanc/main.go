@@ -2,6 +2,7 @@ package main
 
 import (
 	cmd "github.com/proencaj/orthanc-cli/internal/commands"
+	"github.com/proencaj/orthanc-cli/internal/commands/dicomweb"
 	"github.com/proencaj/orthanc-cli/internal/commands/instances"
 	"github.com/proencaj/orthanc-cli/internal/commands/modalities"
 	"github.com/proencaj/orthanc-cli/internal/commands/patients"
@@ -45,6 +46,9 @@ func main() {
 	// Set up the client getter for system command to avoid import cycle
 	system.SetClientGetter(cmd.GetClient)
 
+	// Set up the client getter for dicomweb command to avoid import cycle
+	dicomweb.SetClientGetter(cmd.GetClient)
+
 	// Set up the client getter for servers command to avoid import cycle
 	servers.SetClientGetter(cmd.GetClient)
 
@@ -58,6 +62,7 @@ func main() {
 	cmd.AddCommand(tools.NewToolsCommand())
 	cmd.AddCommand(system.NewSystemCommand())
 	cmd.AddCommand(version.NewVersionCommand())
+	cmd.AddCommand(dicomweb.NewDicomwebCommand())
 
 	// Execute CLI
 	cmd.Execute()

@@ -47,6 +47,11 @@ Whether you're a radiologist managing studies, a developer building PACS integra
 - **DICOM Operations**: C-ECHO, C-FIND, C-MOVE, C-GET, and C-STORE support
 - **Batch Transfer**: Move or retrieve studies across modalities efficiently
 
+### DICOMweb Integration
+
+- **Server Management**: Configure and manage remote DICOMweb servers
+- **WADO-RS/STOW-RS/QIDO-RS**: Full DICOMweb protocol support via configured servers
+
 ### System Operations
 
 - **Server Management**: Monitor system status, adjust log levels, perform maintenance
@@ -376,6 +381,52 @@ orthanc modalities retrieve REMOTE_PACS <study-id>
 
 # Store study to modality (C-STORE)
 orthanc modalities store REMOTE_PACS <study-id>
+```
+
+### DICOMweb Server Management
+
+```bash
+# List all configured DICOMweb servers
+orthanc servers list
+
+# List servers with full details
+orthanc servers list --expand
+
+# Get details of a specific server
+orthanc servers get my-pacs
+
+# Create a new DICOMweb server
+orthanc servers create my-pacs --url https://pacs.example.com/dicom-web
+
+# Create with authentication
+orthanc servers create my-pacs \
+  --url https://pacs.example.com/dicom-web \
+  --username admin \
+  --password secret
+
+# Create with all options
+orthanc servers create my-pacs \
+  --url https://pacs.example.com/dicom-web \
+  --username admin \
+  --password secret \
+  --has-delete \
+  --chunked-transfers \
+  --has-wado-rs-universal-transfer-syntax
+
+# Update an existing server
+orthanc servers update my-pacs --url https://new-pacs.example.com/dicom-web
+
+# Enable DELETE support on a server
+orthanc servers update my-pacs --has-delete
+
+# Disable chunked transfers (for Orthanc <= 1.5.6)
+orthanc servers update my-pacs --chunked-transfers=false
+
+# Remove a server (with confirmation prompt)
+orthanc servers remove my-pacs
+
+# Remove without confirmation
+orthanc servers remove my-pacs --force
 ```
 
 ### DICOMweb Servers
